@@ -9,6 +9,7 @@ on:
     branches:
       - main
 
+
 jobs:
 
   frontend-ci:
@@ -56,9 +57,7 @@ jobs:
 
 
   docker:
-    needs:
-      - frontend-ci
-      - backend-ci
+    needs: [frontend-ci, backend-ci]
 
     runs-on: ubuntu-latest
 
@@ -69,15 +68,13 @@ jobs:
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # IMPORTANT FIX: force correct registry context
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
-          registry: docker.io
+          registry: https://index.docker.io/v1/
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # IMPORTANT FIX: consistent image naming
       - name: Build frontend image
         run: docker build -t docker.io/${{ secrets.DOCKER_USERNAME }}/frontend:latest ./CI-frontend/frontend
 
