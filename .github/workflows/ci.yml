@@ -83,8 +83,8 @@ jobs:
 
       - name: Push frontend image
         run: |
-          docker push Ramswaroop11/frontend:latest
+          docker push docker.io/Ramswaroop11/frontend:latest
 
       - name: Push backend image
         run: |
-          docker push Ramswaroop11/backend:latest
+          docker push docker.io/Ramswaroop11/backend:latest
