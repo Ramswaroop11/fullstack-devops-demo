@@ -1,0 +1,28 @@
+services:
+
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: devopsdb
+    ports:
+      - "3307:3306"
+
+  backend:
+    build: ./CI-backend
+    container_name: backend
+    restart: always
+    depends_on:
+      - mysql
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build: ./CI-frontend/frontend
+    container_name: frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
