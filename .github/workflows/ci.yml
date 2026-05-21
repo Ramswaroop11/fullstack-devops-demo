@@ -33,6 +33,7 @@ jobs:
       - name: Build frontend
         run: npm run build
 
+
   backend-ci:
     runs-on: ubuntu-latest
 
@@ -53,6 +54,7 @@ jobs:
       - name: Build backend
         run: mvn clean package -DskipTests
 
+
   docker:
     needs:
       - frontend-ci
@@ -67,20 +69,23 @@ jobs:
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      # IMPORTANT FIX: force correct registry context
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
+          registry: docker.io
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      # IMPORTANT FIX: consistent image naming
       - name: Build frontend image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend:latest ./CI-frontend/frontend
+        run: docker build -t docker.io/${{ secrets.DOCKER_USERNAME }}/frontend:latest ./CI-frontend/frontend
 
       - name: Build backend image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/backend:latest ./CI-backend
+        run: docker build -t docker.io/${{ secrets.DOCKER_USERNAME }}/backend:latest ./CI-backend
 
       - name: Push frontend image
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/frontend:latest
+        run: docker push docker.io/${{ secrets.DOCKER_USERNAME }}/frontend:latest
 
       - name: Push backend image
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/backend:latest
+        run: docker push docker.io/${{ secrets.DOCKER_USERNAME }}/backend:latest
